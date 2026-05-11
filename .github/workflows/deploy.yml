@@ -39,4 +39,4 @@ jobs:
             --name esp-cleanroom \
             --src-path deploy.zip \
             --type zip \
-            --async false
+            --async true
