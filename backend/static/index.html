@@ -64,7 +64,7 @@
                         <div class="metric-label"><i class="fa-solid fa-wind"></i> AIR QUALITY</div>
                         <div class="metric-mid">
                             <span id="air-quality-value">---</span
-                            ><span class="metric-unit">PPM</span>
+                            ><span class="metric-unit">ADC</span>
                         </div>
                         <div class="metric-threshold">
                             THR <span id="aq-threshold-display">---</span>
@@ -113,7 +113,7 @@
                     </div>
                     <div class="chart-legend" id="chart-legend">
                         <span class="legend-line legend-line--occ"></span>OCCUPANCY (left)
-                        <span class="legend-line legend-line--aq"></span>AIR QUALITY PPM (right)
+                        <span class="legend-line legend-line--aq"></span>AIR QUALITY ADC (right)
                     </div>
                 </div>
                 <div class="chart-wrap"><canvas id="history-chart"></canvas></div>
@@ -139,7 +139,7 @@
                             />
                         </label>
                         <label class="config-label"
-                            >AQ THRESHOLD (PPM)
+                            >AQ THRESHOLD (ADC)
                             <input
                                 class="config-input"
                                 id="cfg-aq-threshold"

@@ -240,7 +240,7 @@ function renderChart(rows) {
       position: "right",
       title: {
         display: true,
-        text: "PPM",
+        text: "ADC",
         color: C.amber,
         font: { family: "JetBrains Mono", size: 8 },
       },
@@ -249,7 +249,7 @@ function renderChart(rows) {
       border: { color: C.amber },
       beginAtZero: false,
     };
-    legendHtml = `<span class="legend-line legend-line--occ"></span>OCCUPANCY (left) <span class="legend-line legend-line--aq"></span>AIR QUALITY PPM (right)`;
+    legendHtml = `<span class="legend-line legend-line--occ"></span>OCCUPANCY (left) <span class="legend-line legend-line--aq"></span>AIR QUALITY ADC (right)`;
   } else {
     datasets = [
       {
@@ -367,9 +367,17 @@ async function applyConfig() {
     cooldown_duration_s: parseInt(el.cfgCooldown.value),
   };
 
+  const limits = {
+    max_capacity: { min: 1, max: 50 },
+    air_quality_threshold: { min: 1, max: 4095 },
+    buzzer_duration_s: { min: 1, max: 60 },
+    cooldown_duration_s: { min: 5, max: 300 },
+  };
+
   for (const [k, v] of Object.entries(payload)) {
-    if (isNaN(v) || v < 1) {
-      showFeedback("INVALID VALUES", "err");
+    const { min, max } = limits[k];
+    if (isNaN(v) || v < min || v > max) {
+      showFeedback(`${k.toUpperCase().replace(/_/g, " ")}: ${min}–${max}`, "err");
       return;
     }
   }
