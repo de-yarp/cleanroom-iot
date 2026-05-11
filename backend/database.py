@@ -41,7 +41,9 @@ async def init_db():
                 max_capacity          INTEGER NOT NULL DEFAULT 5,
                 air_quality_threshold INTEGER NOT NULL DEFAULT 300,
                 buzzer_duration_s     INTEGER NOT NULL DEFAULT 5,
-                cooldown_duration_s   INTEGER NOT NULL DEFAULT 15
+                cooldown_duration_s   INTEGER NOT NULL DEFAULT 15,
+                fan_override          TEXT    NOT NULL DEFAULT 'auto',
+                buzzer_silence        INTEGER NOT NULL DEFAULT 0
             )
         """)
 

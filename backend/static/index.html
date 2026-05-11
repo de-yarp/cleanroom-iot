@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cleanroom Monitor</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <header class="header">
+            <div class="header-title">CLEANROOM MONITOR</div>
+            <div class="header-meta">
+                <span id="topbar-time">--:--:--</span>
+                <span class="header-sep">·</span>
+                <span id="status-label">CONNECTING</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="metrics-row">
+                <div class="metric metric--occupancy" id="panel-occupancy">
+                    <div class="metric-label"><i class="fa-solid fa-person"></i> OCCUPANCY</div>
+                    <div class="metric-value-row">
+                        <span class="metric-big" id="occupancy-count">--</span>
+                        <span class="metric-big metric-sep">/</span>
+                        <span class="metric-big metric-max" id="occupancy-max">--</span>
+                    </div>
+                    <div class="occ-bar-track">
+                        <div class="occ-bar-fill" id="occupancy-bar"></div>
+                    </div>
+                    <div class="metric-sub">
+                        <span>&#8593; <span id="entry-count">--</span> entries</span>
+                        <span>&#8595; <span id="exit-count">--</span> exits</span>
+                    </div>
+                </div>
+
+                <div class="metrics-right">
+                    <div class="metric metric--env">
+                        <div class="metric-label">
+                            <i class="fa-solid fa-temperature-half"></i> TEMPERATURE
+                        </div>
+                        <div class="metric-mid">
+                            <span id="temp-value">--.-</span><span class="metric-unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="metric metric--env">
+                        <div class="metric-label"><i class="fa-solid fa-droplet"></i> HUMIDITY</div>
+                        <div class="metric-mid">
+                            <span id="humidity-value">--.-</span
+                            ><span class="metric-unit">%RH</span>
+                        </div>
+                    </div>
+                    <div class="metric metric--env" id="aq-metric">
+                        <div class="metric-label"><i class="fa-solid fa-wind"></i> AIR QUALITY</div>
+                        <div class="metric-mid">
+                            <span id="air-quality-value">---</span
+                            ><span class="metric-unit">PPM</span>
+                        </div>
+                        <div class="metric-threshold">
+                            THR <span id="aq-threshold-display">---</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="actuator-strip">
+                <div class="actuator-block">
+                    <div class="actuator-label"><i class="fa-solid fa-fan"></i> FAN</div>
+                    <div class="actuator-state" id="fan-state">---</div>
+                    <div class="btn-group">
+                        <button class="btn" data-fan="auto">AUTO</button>
+                        <button class="btn" data-fan="on">ON</button>
+                        <button class="btn" data-fan="off">OFF</button>
+                    </div>
+                </div>
+                <div class="actuator-divider"></div>
+                <div class="actuator-block">
+                    <div class="actuator-label"><i class="fa-solid fa-bell"></i> ALARM</div>
+                    <div class="actuator-state" id="buzzer-state">---</div>
+                    <button class="btn btn--danger" id="btn-silence">SILENCE</button>
+                </div>
+                <div class="actuator-divider"></div>
+                <div class="actuator-block">
+                    <div class="actuator-label">
+                        <i class="fa-solid fa-circle-check"></i> STATUS
+                    </div>
+                    <div class="status-badge" id="aq-status-badge">NOMINAL</div>
+                </div>
+            </section>
+
+            <section class="graph-section">
+                <div class="section-header">
+                    <span class="section-title">HISTORY</span>
+                    <div class="view-btns">
+                        <button class="range-btn active" data-view="occ-aq">OCC / AQ</button>
+                        <button class="range-btn" data-view="temp-hum">TEMP / HUM</button>
+                    </div>
+                    <div class="range-btns">
+                        <button class="range-btn active" data-range="15m">15M</button>
+                        <button class="range-btn" data-range="1h">1H</button>
+                        <button class="range-btn" data-range="6h">6H</button>
+                        <button class="range-btn" data-range="24h">24H</button>
+                    </div>
+                    <div class="chart-legend" id="chart-legend">
+                        <span class="legend-line legend-line--occ"></span>OCCUPANCY (left)
+                        <span class="legend-line legend-line--aq"></span>AIR QUALITY PPM (right)
+                    </div>
+                </div>
+                <div class="chart-wrap"><canvas id="history-chart"></canvas></div>
+            </section>
+
+            <section class="bottom-row">
+                <div class="bottom-panel">
+                    <div class="section-title">EVENT LOG</div>
+                    <ul class="event-list" id="event-list">
+                        <li class="event-placeholder">Waiting for events...</li>
+                    </ul>
+                </div>
+                <div class="bottom-panel">
+                    <div class="section-title">CONFIGURATION</div>
+                    <div class="config-grid">
+                        <label class="config-label"
+                            >MAX CAPACITY
+                            <input
+                                class="config-input"
+                                id="cfg-max-capacity"
+                                type="number"
+                                min="1"
+                            />
+                        </label>
+                        <label class="config-label"
+                            >AQ THRESHOLD (PPM)
+                            <input
+                                class="config-input"
+                                id="cfg-aq-threshold"
+                                type="number"
+                                min="0"
+                            />
+                        </label>
+                        <label class="config-label"
+                            >BUZZER DURATION (s)
+                            <input
+                                class="config-input"
+                                id="cfg-buzzer-duration"
+                                type="number"
+                                min="1"
+                            />
+                        </label>
+                        <label class="config-label"
+                            >COOLDOWN PERIOD (s)
+                            <input class="config-input" id="cfg-cooldown" type="number" min="1" />
+                        </label>
+                    </div>
+                    <button class="btn btn--apply" id="btn-apply-config">APPLY CHANGES</button>
+                    <span class="config-feedback" id="config-feedback"></span>
+                </div>
+            </section>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script src="app.js"></script>
+    </body>
+</html>
