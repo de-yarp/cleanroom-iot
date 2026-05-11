@@ -24,9 +24,19 @@ jobs:
       - name: Export requirements.txt
         run: uv export --no-hashes -o requirements.txt
 
-      - name: Deploy to Azure App Service
-        uses: azure/webapps-deploy@v3
+      - name: Azure login
+        uses: azure/login@v2
         with:
-          app-name: esp-cleanroom
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}"}'
+
+      - name: Zip package
+        run: zip -r deploy.zip . -x "*.git*" -x "antenv/*" -x "*.pyc" -x "__pycache__/*"
+
+      - name: Deploy via zip deploy (triggers Oryx build)
+        run: |
+          az webapp deploy \
+            --resource-group esp \
+            --name esp-cleanroom \
+            --src-path deploy.zip \
+            --type zip \
+            --async false
