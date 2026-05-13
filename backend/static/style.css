@@ -152,10 +152,11 @@ main {
 }
 
 /* Occupancy states */
-.metric--occupancy.warn #occupancy-count,
-.metric--occupancy.warn .occ-bar-fill { color: var(--amber); background: var(--amber); }
-.metric--occupancy.crit #occupancy-count,
-.metric--occupancy.crit .occ-bar-fill { color: var(--red); background: var(--red); }
+.metric--occupancy.warn #occupancy-count { color: var(--amber); }
+.metric--occupancy.warn .occ-bar-fill    { background: var(--amber); }
+
+.metric--occupancy.crit #occupancy-count { color: var(--red); }
+.metric--occupancy.crit .occ-bar-fill    { background: var(--red); }
 
 /* Right env metrics */
 .metrics-right {

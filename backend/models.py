@@ -54,6 +54,7 @@ class StatusResponse(BaseModel):
     temperature: float
     humidity: float
     air_quality: int
+    air_quality_threshold: int
     fan_state: str
     buzzer_state: str
     entry_count: int
