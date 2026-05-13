@@ -32,7 +32,9 @@ async def get_status():
     # Fetch max_capacity from config to include in response
     db = await get_db()
     try:
-        cursor = await db.execute("SELECT max_capacity FROM config WHERE id = 1")
+        cursor = await db.execute(
+            "SELECT max_capacity, air_quality_threshold FROM config WHERE id = 1"
+        )
         config_row = await cursor.fetchone()
     finally:
         await db.close()
@@ -44,6 +46,7 @@ async def get_status():
         temperature=row["temperature"],
         humidity=row["humidity"],
         air_quality=row["air_quality"],
+        air_quality_threshold=config_row["air_quality_threshold"],
         fan_state=row["fan_state"],
         buzzer_state=row["buzzer_state"],
         entry_count=row["entry_count"],
